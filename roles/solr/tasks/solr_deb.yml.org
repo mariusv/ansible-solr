@@ -1,8 +1,0 @@
-  - name: Install from apt
-    apt: name={{ item }} state=present update_cache=yes
-    with_items:
-       - jetty
-       - zip
-       - unzip
-       - openjdk-7-jdk
-       - libjetty-extra
