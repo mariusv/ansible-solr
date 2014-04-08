@@ -1,0 +1,3 @@
+---
+- name: restart Jetty
+  service: name=jetty state=restarted

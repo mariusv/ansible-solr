@@ -1,0 +1,9 @@
+---
+- name: Set up Solr for Drupal 
+  hosts: solr 
+  gather_facts: true
+  sudo: yes
+
+
+  roles:
+  - solr 

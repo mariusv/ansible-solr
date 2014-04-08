@@ -1,0 +1,2 @@
+[solr]
+54.237.189.6 ansible_ssh_user=ubuntu

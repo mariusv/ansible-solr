@@ -1,0 +1,67 @@
+  - name: Install from apt
+    apt: name={{ item }} state=present update_cache=yes
+    with_items:
+       - jetty
+       - zip
+       - unzip
+       - openjdk-7-jdk
+       - libjetty-extra
+       - vim
+       - curl
+
+  - name: Downloading Solr if 
+    command: curl http://mirror.ox.ac.uk/sites/rsync.apache.org/lucene/solr/4.7.1/solr-4.7.1.tgz -o /root/solr-4.7.1.tgz creates=/root/solr-4.7.1.tgz
+
+  - name: Unzipping Solr
+    command: tar zxf /root/solr-4.7.1.tgz -C /root/ creates=/root/solr-4.7.1
+
+  - name: Creating the Solr dir
+    command: mkdir /usr/share/solr creates=/usr/share/solr
+  - file: path=/usr/share/solr recurse=yes owner=jetty group=jetty
+
+  - name: Unzip Solr
+    command: unzip /root/solr-4.7.1/dist/solr-4.7.1.war -d /usr/share/solr creates=/usr/share/solr
+
+  - name: Copy Solr libs
+    command: rsync -arvz /root/solr-4.7.1/example/lib/ext/ /usr/share/jetty/lib/ext/
+
+  - name: Creating the symlink
+    command: ln -s /usr/share/solr /usr/share/jetty/webapps/solr creates=/usr/share/jetty/webapps/solr
+
+  - name: Set up solr config
+    template: src=config/solr.xml dest=/usr/share/solr/solr.xml
+
+  - name: Jetty config so we can start it
+    template: src=config/jetty dest=/etc/default/jetty
+
+  - name: Creating the lib dir
+    command: mkdir -p /var/lib/solr/kc/data
+  - file: path=/var/lib/solr recurse=yes owner=jetty group=jetty
+
+  - name: Creating the core dir
+    command: mkdir -p /usr/share/solr/kc owner=jetty group=jetty
+  - name: Copy the conf for the core
+    command: cp -r /root/solr-4.7.1/example/solr/collection1/conf /usr/share/solr/kc owner=jetty group=jetty
+
+  - name: Copy the needed jar in the right path
+    command: cp /root/solr-4.7.1/example/lib/ext/log4j-1.2.16.jar /usr/share/solr/WEB-INF/lib/
+
+  - name: Copy the needed jars
+    command: /bin/cp /root/solr-4.7.1/example/lib/ext/slf4j-api-1.6.6.jar /usr/share/solr/WEB-INF/lib/
+
+  - name: Copy the needed jars
+    command: /bin/cp /root/solr-4.7.1/example/lib/ext/slf4j-log4j12-1.6.6.jar /usr/share/solr/WEB-INF/lib/
+
+  - name: Download the Drupal config for Solr
+    command: /usr/bin/curl http://ftp.drupal.org/files/projects/search_api_solr-7.x-1.4.zip -o /root/search_api_solr-7.x-1.4.zip creates=/root/search_api_solr-7.x-1.4.zip
+
+  - name: Unzipping it
+    command: unzip /root/search_api_solr-7.x-1.4.zip -d /root/
+  
+  - name: Creating the folder kc
+    command: mkdir /usr/share/solr/kc/conf
+
+  - name: Copy the configs to the core
+    command: rsync -arvz /root/search_api_solr/solr-conf/4.x/ /usr/share/solr/kc/conf/
+  - file: path=/usr/share/solr/kc recurse=yes owner=jetty group=jetty
+    notify: restart Jetty
