@@ -3,7 +3,8 @@
   hosts: solr 
   gather_facts: true
   sudo: yes
-
+  vars_files:
+    - var/default.yml
 
   roles:
   - solr 

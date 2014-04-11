@@ -10,20 +10,20 @@
        - curl
 
   - name: Downloading Solr if 
-    get_url: url=http://mirror.ox.ac.uk/sites/rsync.apache.org/lucene/solr/4.7.1/solr-4.7.1.tgz dest=/root/solr-4.7.1.tgz
+    get_url: url=http:{{ solr_repo }}/{{ solr_version }}/solr-{{ solr_version }}.tgz dest=/root/solr-{{ solr_version }}.tgz
 
   - name: Unzipping Solr
-    command: tar zxf /root/solr-4.7.1.tgz -C /root/ 
+    command: tar zxf /root/solr-{{ solr_version }}.tgz -C /root/ 
 
   - name: Creating the Solr dir
     command: mkdir /usr/share/solr creates=/usr/share/solr
   - file: path=/usr/share/solr recurse=yes owner=jetty group=jetty
 
   - name: Unzip Solr
-    command: unzip /root/solr-4.7.1/dist/solr-4.7.1.war -d /usr/share/solr
+    command: unzip /root/solr-{{ solr_version }}/dist/solr-{{ solr_version }}.war -d /usr/share/solr
 
   - name: Copy Solr libs
-    command: rsync -arvz /root/solr-4.7.1/example/lib/ext/ /usr/share/jetty/lib/ext/
+    command: rsync -arvz /root/solr-{{ solr_version }}/example/lib/ext/ /usr/share/jetty/lib/ext/
 
   - name: Symlink
     file: src=/usr/share/solr path=/usr/share/jetty/webapps/solr state=link
@@ -41,22 +41,22 @@
   - name: Creating the core dir
     command: mkdir -p /usr/share/solr/kc owner=jetty group=jetty
   - name: Copy the conf for the core
-    command: cp -r /root/solr-4.7.1/example/solr/collection1/conf /usr/share/solr/kc owner=jetty group=jetty
+    command: cp -r /root/solr-{{ solr_version }}/example/solr/collection1/conf /usr/share/solr/kc owner=jetty group=jetty
 
   - name: Copy the needed jar in the right path
-    command: cp /root/solr-4.7.1/example/lib/ext/log4j-1.2.16.jar /usr/share/solr/WEB-INF/lib/
+    command: cp /root/solr-{{ solr_version }}/example/lib/ext/log4j-1.2.16.jar /usr/share/solr/WEB-INF/lib/
 
   - name: Copy the needed jars
-    command: /bin/cp /root/solr-4.7.1/example/lib/ext/slf4j-api-1.6.6.jar /usr/share/solr/WEB-INF/lib/
+    command: /bin/cp /root/solr-{{ solr_version }}/example/lib/ext/slf4j-api-1.6.6.jar /usr/share/solr/WEB-INF/lib/
 
   - name: Copy the needed jars
-    command: /bin/cp /root/solr-4.7.1/example/lib/ext/slf4j-log4j12-1.6.6.jar /usr/share/solr/WEB-INF/lib/
+    command: /bin/cp /root/solr-{{ solr_version }}/example/lib/ext/slf4j-log4j12-1.6.6.jar /usr/share/solr/WEB-INF/lib/
 
   - name: Download the Drupal config for Solr
-    command: /usr/bin/curl http://ftp.drupal.org/files/projects/search_api_solr-7.x-1.4.zip -o /root/search_api_solr-7.x-1.4.zip creates=/root/search_api_solr-7.x-1.4.zip
+    get_url: url={{ drupal_solr_repo  }}-{{ drupal_solr_version }}.zip dest=/root/search_api_solr-{{ drupal_solr_version }}.zip
 
   - name: Unzipping it
-    command: unzip /root/search_api_solr-7.x-1.4.zip -d /root/
+    command: unzip /root/search_api_solr-{{ drupal_solr_version }}.zip -d /root/
   
   - name: Creating the folder kc
     command: mkdir /usr/share/solr/kc/conf

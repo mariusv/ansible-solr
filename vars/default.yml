@@ -1,0 +1,6 @@
+---
+
+solr_version: 4.7.1
+solr_repo: "http://mirror.ox.ac.uk/sites/rsync.apache.org/lucene/solr/"
+drupal_solr_version: 7.x-1.4
+drupal_solr_repo: "http://ftp.drupal.org/files/projects/search_api_solr"
