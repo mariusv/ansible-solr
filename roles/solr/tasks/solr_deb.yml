@@ -9,17 +9,17 @@
        - vim
        - curl
 
-  - name: Downloading Solr if 
+  - name: Downloading Solr 
     get_url: url=http:{{ solr_repo }}/{{ solr_version }}/solr-{{ solr_version }}.tgz dest=/root/solr-{{ solr_version }}.tgz
 
   - name: Unzipping Solr
     command: tar zxf /root/solr-{{ solr_version }}.tgz -C /root/ 
 
-  - name: Creating the Solr dir
+  - name: Creating Solr dir
     command: mkdir /usr/share/solr creates=/usr/share/solr
   - file: path=/usr/share/solr recurse=yes owner=jetty group=jetty
 
-  - name: Unzip Solr
+  - name: Deploy Solr
     command: unzip /root/solr-{{ solr_version }}/dist/solr-{{ solr_version }}.war -d /usr/share/solr
 
   - name: Copy Solr libs
