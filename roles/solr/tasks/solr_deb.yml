@@ -10,23 +10,23 @@
        - curl
 
   - name: Downloading Solr if 
-    command: curl http://mirror.ox.ac.uk/sites/rsync.apache.org/lucene/solr/4.7.1/solr-4.7.1.tgz -o /root/solr-4.7.1.tgz creates=/root/solr-4.7.1.tgz
+    get_url: url=http://mirror.ox.ac.uk/sites/rsync.apache.org/lucene/solr/4.7.1/solr-4.7.1.tgz dest=/root/solr-4.7.1.tgz
 
   - name: Unzipping Solr
-    command: tar zxf /root/solr-4.7.1.tgz -C /root/ creates=/root/solr-4.7.1
+    command: tar zxf /root/solr-4.7.1.tgz -C /root/ 
 
   - name: Creating the Solr dir
     command: mkdir /usr/share/solr creates=/usr/share/solr
   - file: path=/usr/share/solr recurse=yes owner=jetty group=jetty
 
   - name: Unzip Solr
-    command: unzip /root/solr-4.7.1/dist/solr-4.7.1.war -d /usr/share/solr creates=/usr/share/solr
+    command: unzip /root/solr-4.7.1/dist/solr-4.7.1.war -d /usr/share/solr
 
   - name: Copy Solr libs
     command: rsync -arvz /root/solr-4.7.1/example/lib/ext/ /usr/share/jetty/lib/ext/
 
-  - name: Creating the symlink
-    command: ln -s /usr/share/solr /usr/share/jetty/webapps/solr creates=/usr/share/jetty/webapps/solr
+  - name: Symlink
+    file: src=/usr/share/solr path=/usr/share/jetty/webapps/solr state=link
 
   - name: Set up solr config
     template: src=config/solr.xml dest=/usr/share/solr/solr.xml
